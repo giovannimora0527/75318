@@ -2,14 +2,26 @@ package com.uniminuto.biblioteca.services;
 
 import com.uniminuto.biblioteca.entity.Usuario;
 import java.util.List;
-import java.util.Optional;
 import org.apache.coyote.BadRequestException;
+
 /**
  *
- * @author harri
+ * @author lmora
  */
 public interface UsuarioService {
-    List<Usuario> obtenerListadoUsuarios();
-
-    Optional<Usuario> findUserByEmail(String correo) throws BadRequestException;
+    
+    /**
+     * Servicio para listar todos los usuarios del sistema.
+     * @return Lista de usuarios registrados.
+     * @throws BadRequestException Excepcion.
+     */
+    List<Usuario> listarTodo() throws BadRequestException;
+    
+    /**
+     * Busca un usuario dado un email.
+     * @param correo email a buscar.
+     * @return Usuario.
+     * @throws BadRequestException excepcion.
+     */
+    Usuario buscarPorCorreo(String correo) throws BadRequestException;
 }

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @CrossOrigin(origins = "*")
 @RequestMapping("/libro")
 public interface LibroApi {
-
         /**
          * Metodo para listar los autores registrados en bd.
          *
@@ -63,6 +62,6 @@ public interface LibroApi {
          */
         @RequestMapping(value = "/obtener-libro-titulo", produces = { "application/json" }, consumes = {
                         "application/json" }, method = RequestMethod.GET)
-        ResponseEntity<Optional<Libro>> obtenerLibroPorTitulo(@RequestParam String titulo)
+        ResponseEntity<Libro> obtenerLibroPorTitulo(@RequestParam String titulo)
                         throws BadRequestException;
 }

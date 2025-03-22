@@ -4,12 +4,19 @@ import com.uniminuto.biblioteca.entity.Usuario;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
 /**
  *
- * @author harri
+ * @author lmora
  */
 @Repository
 public interface UsuarioRepository extends
-                JpaRepository<Usuario, Integer> {
-    Optional<Usuario> findByCorreo(String correo);   
+        JpaRepository<Usuario, Integer> {
+    
+    /**
+     * Busca un usuario dado un email.
+     * @param correo email de entrada.
+     * @return Usuario que cumpla con el criterio.
+     */
+    Optional<Usuario> findByCorreo(String correo);
 }

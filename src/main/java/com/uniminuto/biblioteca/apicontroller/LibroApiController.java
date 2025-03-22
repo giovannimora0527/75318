@@ -17,7 +17,7 @@ import org.springframework.http.ResponseEntity;
  */
 @RestController
 public class LibroApiController implements LibroApi {
-
+    
   @Autowired
   private LibroService libroService;
 
@@ -34,11 +34,11 @@ public class LibroApiController implements LibroApi {
 
   @Override
   public ResponseEntity<List<Libro>> obtenerLibroPorAutor(Integer autorId) throws BadRequestException {
-    return ResponseEntity.ok(this.libroService.obtenerLibroPorAutor(autorId));
+    return ResponseEntity.ok(this.libroService.obtenerLibrosPorAutor(autorId));
   }
 
   @Override
-  public ResponseEntity<Optional<Libro>> obtenerLibroPorTitulo(String titulo) throws BadRequestException {
-    return ResponseEntity.ok(this.libroService.obtenerLibroPorTitulo(titulo));
+  public ResponseEntity<Libro> obtenerLibroPorTitulo(String titulo) throws BadRequestException {
+    return ResponseEntity.ok(this.libroService.obtenerLibroPorNombre(titulo));
   }
 }
