@@ -2,8 +2,6 @@ package com.uniminuto.biblioteca.api;
 
 import com.uniminuto.biblioteca.entity.Libro;
 import java.util.List;
-import java.util.Optional;
-
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
