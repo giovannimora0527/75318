@@ -4,14 +4,14 @@ import com.uniminuto.biblioteca.entity.Usuario;
 import com.uniminuto.biblioteca.repository.UsuarioRepository;
 import com.uniminuto.biblioteca.services.UsuarioService;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- *
+ * Implementacion del servicio para usuarios.
  * @author lmora
  */
 @Service
@@ -40,34 +40,23 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public Usuario buscarPorCorreo(String correo) throws BadRequestException {
-        if (correo == null || correo.isBlank()) {
-            throw new BadRequestException("El correo: " + correo + ", no cumple "
-                    + "la validación para ser un correo valido.");
+        Objects.requireNonNull(correo, "El correo es obligatorio");
+
+        if (correo.isBlank() || !validarCorreo(correo)) {
+            throw new BadRequestException("El correo proporcionado no es válido.");
         }
 
-        boolean isValidoEmail = this.validarCorreo(correo);
-        if (!isValidoEmail) {
-            throw new BadRequestException("El correo no es valido.");
-        }
-
-        Optional<Usuario> optUsuario = this.usuarioRepository
-                .findByCorreo(correo);
-        if (!optUsuario.isPresent()) {
-            throw new BadRequestException("No hay registros de usuarios "
-                    + "registrados con el correo ingresado.");
-        }
-        return optUsuario.get();
+        return usuarioRepository.findByCorreo(correo)
+                .orElseThrow(() -> new BadRequestException("No hay registros de "
+                        + "usuarios con el correo ingresado."));
     }
 
     /**
-     * 
-     * @param correo
-     * @return 
+     * Funcion para validar un correo.
+     * @param correo correo a validar.
+     * @return si es valido o no.
      */
-    public boolean validarCorreo(String correo) {
-        if (correo == null || correo.isBlank()) {
-            return false;
-        }
+    private boolean validarCorreo(String correo) {
         return EMAIL_PATTERN.matcher(correo).matches();
     }
 
