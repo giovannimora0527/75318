@@ -1,10 +1,14 @@
 package com.uniminuto.biblioteca.servicesimpl;
 
 import com.uniminuto.biblioteca.entity.Usuario;
+import com.uniminuto.biblioteca.model.UsuarioRq;
+import com.uniminuto.biblioteca.model.UsuarioRs;
 import com.uniminuto.biblioteca.repository.UsuarioRepository;
 import com.uniminuto.biblioteca.services.UsuarioService;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +62,35 @@ public class UsuarioServiceImpl implements UsuarioService {
      */
     private boolean validarCorreo(String correo) {
         return EMAIL_PATTERN.matcher(correo).matches();
+    }
+
+    @Override
+    public UsuarioRs guardarUsuarioNuevo(UsuarioRq usuarioNuevo) 
+            throws BadRequestException {
+        System.out.println("Por ahora.");
+        Optional<Usuario> optUser = this.usuarioRepository.findByNombre(usuarioNuevo.getNombreCompleto());
+        if (optUser.isPresent()) {
+            throw new BadRequestException("El nombre del usuario ya existe. Corrija e intente de nuevo.");
+        }        
+        optUser = this.usuarioRepository.findByCorreo(usuarioNuevo.getCorreo());
+        if (optUser.isPresent()) {
+            throw new BadRequestException("El correo del usuario ya existe. Corrija e intente de nuevo.");
+        }         
+        this.usuarioRepository.save(this.convertirUsuarioRqToUsuario(usuarioNuevo));
+        UsuarioRs rta = new UsuarioRs();
+        rta.setStatus(200);
+        rta.setMessage("Se ha guardado el usuario satisfactoriamente");
+        return rta;
+    }
+    
+    private Usuario convertirUsuarioRqToUsuario(UsuarioRq usuarioNuevo) {
+       Usuario usuario = new Usuario();
+       usuario.setCorreo(usuarioNuevo.getCorreo());
+       usuario.setFechaRegistro(LocalDateTime.now());
+       usuario.setNombre(usuarioNuevo.getNombreCompleto());
+       usuario.setTelefono(usuarioNuevo.getTelefono());
+       usuario.setActivo(true);
+       return usuario;
     }
 
 }
