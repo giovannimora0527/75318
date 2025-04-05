@@ -34,4 +34,12 @@ public interface UsuarioService {
      */
     UsuarioRs guardarUsuarioNuevo(UsuarioRq usuarioNuevo) throws BadRequestException;
     
+    
+    /**
+     * Actualiza un usuario.
+     * @return Respuesta del servicio.
+     * @throws BadRequestException excepcion del servicio.
+     */
+    UsuarioRs actualizarUsuario(Usuario usuario) throws BadRequestException;
+    
 }
