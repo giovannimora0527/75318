@@ -26,4 +26,18 @@ public interface UsuarioRepository extends
      * @return Usuario que cumpla con el criterio.
      */
     Optional<Usuario> findByNombre(String nombre);
+    /**
+     * Consulta si un usuario existe por nombre.
+     * @param nombre dato de entrado.
+     * @return si existe true/false.
+     */
+    boolean existsByNombre(String nombre);
+    
+    /**
+     * Consulta si un usuario existe por correo.
+     * @param correo dato de entrada.
+     * @return si existe true/false.
+     */
+    boolean existsByCorreo(String correo);
+    
 }
