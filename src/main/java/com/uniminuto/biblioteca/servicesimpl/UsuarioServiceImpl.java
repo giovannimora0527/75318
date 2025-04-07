@@ -69,8 +69,8 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public UsuarioRs guardarUsuarioNuevo(UsuarioRq usuarioNuevo)
             throws BadRequestException {
-        System.out.println("Por ahora.");
-        Optional<Usuario> optUser = this.usuarioRepository.findByNombre(usuarioNuevo.getNombreCompleto());
+     
+        Optional<Usuario> optUser = this.usuarioRepository.findByNombre(usuarioNuevo.getNombre());
         if (optUser.isPresent()) {
             throw new BadRequestException("El nombre del usuario ya existe. Corrija e intente de nuevo.");
         }
@@ -89,7 +89,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario usuario = new Usuario();
         usuario.setCorreo(usuarioNuevo.getCorreo());
         usuario.setFechaRegistro(LocalDateTime.now());
-        usuario.setNombre(usuarioNuevo.getNombreCompleto());
+        usuario.setNombre(usuarioNuevo.getNombre());
         usuario.setTelefono(usuarioNuevo.getTelefono());
         usuario.setActivo(true);
         return usuario;
@@ -123,6 +123,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         userActualizar.setNombre(usuario.getNombre());
         userActualizar.setCorreo(usuario.getCorreo());
         userActualizar.setTelefono(usuario.getTelefono());
+        userActualizar.setActivo(usuario.getActivo());
         this.usuarioRepository.save(userActualizar);
         return rta;
     }
@@ -135,6 +136,9 @@ public class UsuarioServiceImpl implements UsuarioService {
             return true;
         }
         if (!userOrigin.getTelefono().equals(usuarioFront.getTelefono())) {
+            return true;
+        }
+        if (!userOrigin.getActivo().equals(usuarioFront.getActivo())) {
             return true;
         }
         return false;

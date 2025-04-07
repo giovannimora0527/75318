@@ -14,7 +14,7 @@ public class UsuarioRq {
     /**
      * Nombre del usuario.
      */
-    private String nombreCompleto;
+    private String nombre;
 
     /**
      * Correo electrónico del usuario (debe ser único).
