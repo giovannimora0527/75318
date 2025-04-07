@@ -19,4 +19,11 @@ public interface UsuarioRepository extends
      * @return Usuario que cumpla con el criterio.
      */
     Optional<Usuario> findByCorreo(String correo);
+    
+    /**
+     * Busca un usuario dado un nombre.
+     * @param nombre nombre de entrada.
+     * @return Usuario que cumpla con el criterio.
+     */
+    Optional<Usuario> findByNombre(String nombre);
 }

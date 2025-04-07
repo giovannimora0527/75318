@@ -32,14 +32,6 @@ public class Usuario implements Serializable {
     private Integer usuarioId;
 
     /**
-     * Identificador único del usuario.
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_usuario", nullable = false)
-    private Integer idUsuario;
-
-    /**
      * Nombre del usuario.
      */
     @Column(name = "nombre", nullable = false, length = 100)
@@ -63,4 +55,10 @@ public class Usuario implements Serializable {
      */
     @Column(name = "fecha_registro", nullable = false)
     private LocalDateTime fechaRegistro;
+    
+    /**
+     * Estado del usuario Activo/Inactivo.
+     */
+    @Column(name = "activo")
+    private Boolean activo;
 }

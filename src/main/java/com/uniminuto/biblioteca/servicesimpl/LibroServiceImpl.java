@@ -7,6 +7,7 @@ import com.uniminuto.biblioteca.services.AutorService;
 import com.uniminuto.biblioteca.services.LibroService;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,20 +43,20 @@ public class LibroServiceImpl implements LibroService {
     @Override
     public List<Libro> obtenerLibrosPorAutor(Integer autorId)
             throws BadRequestException {
-        if (autorId == null) {
-            throw new BadRequestException("El id del autor no puede ser vacio.");
-        }
+        Objects.requireNonNull(autorId, "El id del autor no puede ser vacío.");
         Autor autor = this.autorService.obtenerAutorPorId(autorId);
         if (autor == null) {
             throw new BadRequestException("El autor con el id ingresado no existe.");
         }
         List<Libro> librosAutor = this.libroRepository.findByAutor(autor);
-        return !librosAutor.isEmpty() ? librosAutor : Collections.EMPTY_LIST;
+        return !librosAutor.isEmpty()
+                ? librosAutor : Collections.EMPTY_LIST;
     }
 
     @Override
     public Libro obtenerLibroPorNombre(String nombreLibro) throws BadRequestException {
-        if (nombreLibro.isBlank() || nombreLibro.isEmpty()) {
+        Objects.requireNonNull(nombreLibro, "El nombre del libro es obligatorio.");
+        if (nombreLibro.isBlank()) {
             throw new BadRequestException("El nombre del libro es obligatorio.");
         }
         Libro libro = this.libroRepository.findByTitulo(nombreLibro);
