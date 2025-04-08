@@ -71,7 +71,6 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public UsuarioRs guardarUsuarioNuevo(UsuarioRq usuarioNuevo)
             throws BadRequestException {
-        System.out.println("Por ahora.");
         Optional<Usuario> optUser = this.usuarioRepository.findByNombre(usuarioNuevo.getNombre());
         if (optUser.isPresent()) {
             throw new BadRequestException("El nombre del usuario ya existe. Corrija e intente de nuevo.");
@@ -104,7 +103,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         rta.setStatus(200);
         rta.setMessage("Se ha actualizado satisfactoriamente.");
         Optional<Usuario> optUserOrigin = this.usuarioRepository
-                .findById(usuario.getIdUsuario());
+                .findById(usuario.getUsuarioId());
         if (!cambioObjeto(optUserOrigin.get(), usuario)) {
             return rta;
         }
@@ -125,6 +124,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         userActualizar.setNombre(usuario.getNombre());
         userActualizar.setCorreo(usuario.getCorreo());
         userActualizar.setTelefono(usuario.getTelefono());
+        userActualizar.setActivo(usuario.getActivo());
         this.usuarioRepository.save(userActualizar);
         return rta;
     }
@@ -137,6 +137,9 @@ public class UsuarioServiceImpl implements UsuarioService {
             return true;
         }
         if (!userOrigin.getTelefono().equals(usuarioFront.getTelefono())) {
+            return true;
+        }
+        if (!userOrigin.getActivo().equals(usuarioFront.getActivo())) {
             return true;
         }
         return false;
