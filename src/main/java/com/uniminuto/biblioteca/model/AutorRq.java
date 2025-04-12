@@ -1,13 +1,27 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.uniminuto.biblioteca.model;
-
+import lombok.Data;
 /**
  *
  * @author harri
  */
+@Data
 public class AutorRq {
-    private String cosa;
+    /**
+     * Id autor.
+     */
+    private Integer idAutor;
+    /**
+     * Nombre del autor.
+     */
+    private Integer nombre;
+    /**
+     * Fecha de nacimiento del autor.
+     */
+    private String fechaNacimiento;
+
+    /**
+     * Nacionalidad del autor.
+     */    
+    private String nacionalidad;
+
 }
