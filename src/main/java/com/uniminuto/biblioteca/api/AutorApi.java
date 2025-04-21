@@ -1,10 +1,13 @@
 package com.uniminuto.biblioteca.api;
 
 import com.uniminuto.biblioteca.entity.Autor;
+import com.uniminuto.biblioteca.model.AutorRq;
+import com.uniminuto.biblioteca.model.RespuestaGenericaRs;
 import java.util.List;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,6 +50,7 @@ public interface AutorApi {
      /**
      * Metodo para listar los autores registrados en bd.
      *
+     * @param autorIds
      * @return Lista de autores.
      * @throws BadRequestException excepcion.
      */
@@ -55,6 +59,20 @@ public interface AutorApi {
             consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<Autor> listarAutorPorId(@RequestParam Integer autorIds)
+            throws BadRequestException;
+    
+    @RequestMapping(value = "/crear-autor",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.POST)
+    ResponseEntity<RespuestaGenericaRs> crearAutor(@RequestBody AutorRq AutorRq)
+            throws BadRequestException;
+    
+        @RequestMapping(value = "/actualizar-autor",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.POST)
+    ResponseEntity<RespuestaGenericaRs> actualizarAutor(@RequestBody Autor autor)
             throws BadRequestException;
     
 }

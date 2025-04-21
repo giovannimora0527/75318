@@ -4,9 +4,9 @@ import lombok.Data;
 
 /**
  *
- * @author harri
+ * @author lmora
  */
 @Data
-public class AutorRs {
+public class RespuestaGenericaRs {
     private String message;
 }
