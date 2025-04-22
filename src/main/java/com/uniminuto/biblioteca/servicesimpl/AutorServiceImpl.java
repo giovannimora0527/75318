@@ -26,8 +26,7 @@ public class AutorServiceImpl implements AutorService {
 
     @Autowired
     private NacionalidadRepository nacionalidadRepository;
-    
-    
+
     @Override
     public List<Autor> obtenerListadoAutores() {
         return this.autorRepository.findAllByOrderByFechaNacimientoDesc();
@@ -36,14 +35,15 @@ public class AutorServiceImpl implements AutorService {
     @Override
     public List<Autor> obtenerListadoAutoresPorNacionalidad(String nacionalidad)
             throws BadRequestException {
-        this.autorRepository.findByNacionalidad(nacionalidad).forEach(elem -> {
-            System.out.println("Nombre Autor => " + elem.getNombre());
-        });
-        List<Autor> listaAutores = this.autorRepository.findByNacionalidad(nacionalidad);
+        Optional<Nacionalidad> optNacion = this.nacionalidadRepository.findByNombre(nacionalidad);
+        if (!optNacion.isPresent()) {
+            throw new BadRequestException("No se encuentra la nacionalidad " + nacionalidad);
+        }
+        List<Autor> listaAutores = this.autorRepository.findByNacionalidad(optNacion.get());
         if (listaAutores.isEmpty()) {
             throw new BadRequestException("No existen autores con esa nacionalidad.");
         }
-        
+
         return listaAutores;
     }
 
@@ -55,26 +55,26 @@ public class AutorServiceImpl implements AutorService {
         }
         return optAutor.get();
     }
-     
+
     @Override
-    public RespuestaGenericaRs crearAutor(AutorRq autorRq) throws BadRequestException  {
-       // Paso 1. - en la bd si el autor existe por nombre
-       // Paso 2. SI ESTA => lanzo el error
-       // Paso 3. SINO esta Convertir mi objeto entrada rq a entidad autor
-       // Paso 4. Guardo el registro
-       // Paso 5. Devolver una respuesta
-       if (this.autorRepository.existsByNombre(autorRq.getNombre())) {
-           throw new BadRequestException("El autor se encuentra ya registrado");
-       }
-       
-       Autor autor = this.convertirAutorRqToAutor(autorRq);
-       this.autorRepository.save(autor);
-       
-       RespuestaGenericaRs rta = new RespuestaGenericaRs();
-       rta.setMessage("Se ha guardado el libro satisfactoriamente");
-       return rta;
+    public RespuestaGenericaRs crearAutor(AutorRq autorRq) throws BadRequestException {
+        // Paso 1. - en la bd si el autor existe por nombre
+        // Paso 2. SI ESTA => lanzo el error
+        // Paso 3. SINO esta Convertir mi objeto entrada rq a entidad autor
+        // Paso 4. Guardo el registro
+        // Paso 5. Devolver una respuesta
+        if (this.autorRepository.existsByNombre(autorRq.getNombre())) {
+            throw new BadRequestException("El autor se encuentra ya registrado");
+        }
+
+        Autor autor = this.convertirAutorRqToAutor(autorRq);
+        this.autorRepository.save(autor);
+
+        RespuestaGenericaRs rta = new RespuestaGenericaRs();
+        rta.setMessage("Se ha guardado el autor satisfactoriamente");
+        return rta; 
     }
-    
+
     private Autor convertirAutorRqToAutor(AutorRq autorRq) throws BadRequestException {
         Autor autor = new Autor();
 
@@ -82,70 +82,68 @@ public class AutorServiceImpl implements AutorService {
         if (!optNac.isPresent()) {
             throw new BadRequestException("No existe la nacionalidad");
         }
-        
+
         autor.setNombre(autorRq.getNombre());
         autor.setFechaNacimiento(autorRq.getFechaNacimiento());
         autor.setNacionalidad(optNac.get());
         return autor;
-    }  
+    }
 
     @Override
     public RespuestaGenericaRs actualizarAutor(Autor actualizarAutor) throws BadRequestException {
-    Optional<Autor> optAutor = this.autorRepository.findById(actualizarAutor.getAutorId());
-    if (!optAutor.isPresent()) {
-        throw new BadRequestException("No existe el autor con el ID proporcionado.");
-    }
+        Optional<Autor> optAutor = this.autorRepository.findById(actualizarAutor.getAutorId());
+        if (!optAutor.isPresent()) {
+            throw new BadRequestException("No existe el autor con el ID proporcionado.");
+        }
 
-    Autor autorActual = optAutor.get();
+        Autor autorActual = optAutor.get();
 
-    // Verifica si hay cambios reales
-    if (!hayCambiosEnAutor(autorActual, actualizarAutor)) {
+        // Verifica si hay cambios reales
+        if (!hayCambiosEnAutor(autorActual, actualizarAutor)) {
+            RespuestaGenericaRs rta = new RespuestaGenericaRs();
+            rta.setMessage("No se detectaron cambios en el autor.");
+            return rta;
+        }
+
+        // Si cambió el nombre, valida si ya existe otro autor con ese nombre
+        if (!autorActual.getNombre().trim().equalsIgnoreCase(actualizarAutor.getNombre().trim())
+                && this.autorRepository.existsByNombre(actualizarAutor.getNombre())) {
+            throw new BadRequestException("Ya existe un autor con el nombre '" + actualizarAutor.getNombre() + "'.");
+        }
+
+        // Valida la nacionalidad
+        if (actualizarAutor.getNacionalidad() == null || actualizarAutor.getNacionalidad().getNacionalidadId() == null) {
+            throw new BadRequestException("Debe especificar una nacionalidad válida.");
+        }
+
+        Optional<Nacionalidad> optNac = this.nacionalidadRepository.findById(actualizarAutor.getNacionalidad().getNacionalidadId());
+        if (!optNac.isPresent()) {
+            throw new BadRequestException("No existe la nacionalidad con ID " + actualizarAutor.getNacionalidad().getNacionalidadId());
+        }
+
+        // Actualiza los campos
+        autorActual.setNombre(actualizarAutor.getNombre());
+        autorActual.setFechaNacimiento(actualizarAutor.getFechaNacimiento());
+
+        // **Modificación para la nacionalidad:**    
+        autorActual.setNacionalidad(actualizarAutor.getNacionalidad());
+
+        this.autorRepository.save(autorActual);
+
         RespuestaGenericaRs rta = new RespuestaGenericaRs();
-        rta.setMessage("No se detectaron cambios en el autor.");
+        rta.setMessage("Se ha actualizado el autor satisfactoriamente.");
         return rta;
     }
-
-    // Si cambió el nombre, valida si ya existe otro autor con ese nombre
-    if (!autorActual.getNombre().trim().equalsIgnoreCase(actualizarAutor.getNombre().trim())
-            && this.autorRepository.existsByNombre(actualizarAutor.getNombre())) {
-        throw new BadRequestException("Ya existe un autor con el nombre '" + actualizarAutor.getNombre() + "'.");
-    }
-
-    // Valida la nacionalidad
-    if (actualizarAutor.getNacionalidad() == null || actualizarAutor.getNacionalidad().getNacionalidadId() == null) {
-        throw new BadRequestException("Debe especificar una nacionalidad válida.");
-    }
-
-    Optional<Nacionalidad> optNac = this.nacionalidadRepository.findById(actualizarAutor.getNacionalidad().getNacionalidadId());
-    if (!optNac.isPresent()) {
-        throw new BadRequestException("No existe la nacionalidad con ID " + actualizarAutor.getNacionalidad().getNacionalidadId());
-    }
-
-    // Actualiza los campos
-    autorActual.setNombre(actualizarAutor.getNombre());
-    autorActual.setFechaNacimiento(actualizarAutor.getFechaNacimiento());
-
-    // **Modificación para la nacionalidad:**
-    Nacionalidad nacionalidad = new Nacionalidad();
-    nacionalidad.setNacionalidadId(actualizarAutor.getNacionalidad().getNacionalidadId());
-    autorActual.setNacionalidad(nacionalidad);
-
-    this.autorRepository.save(autorActual);
-
-    RespuestaGenericaRs rta = new RespuestaGenericaRs();
-    rta.setMessage("Se ha actualizado el autor satisfactoriamente.");
-    return rta;
-}
 
     private boolean hayCambiosEnAutor(Autor actual, Autor nuevo) {
         if (nuevo.getNacionalidad() == null || actual.getNacionalidad() == null) {
             return true; // Si alguna de las nacionalidades es nula, consideramos que hay cambio
         }
-    return !actual.getNombre().equals(nuevo.getNombre()) ||
-           !actual.getFechaNacimiento().equals(nuevo.getFechaNacimiento()) ||
-           !actual.getNacionalidad().getNacionalidadId().equals(nuevo.getNacionalidad().getNacionalidadId());
+        return !actual.getNombre().equals(nuevo.getNombre())
+                || !actual.getFechaNacimiento().equals(nuevo.getFechaNacimiento())
+                || !actual.getNacionalidad().getNacionalidadId().equals(nuevo.getNacionalidad().getNacionalidadId());
     }
-    
+
     @Override
     public AutorRs guardarAutor(AutorRq autorRq) throws BadRequestException {
         // Podemos reutilizar la lógica de crearAutor y devolver un AutorRs si es necesario
@@ -156,5 +154,3 @@ public class AutorServiceImpl implements AutorService {
         return autorRs;
     }
 }
-    
-

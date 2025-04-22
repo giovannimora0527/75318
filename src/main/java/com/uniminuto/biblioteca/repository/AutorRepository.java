@@ -1,6 +1,7 @@
 package com.uniminuto.biblioteca.repository;
 
 import com.uniminuto.biblioteca.entity.Autor;
+import com.uniminuto.biblioteca.entity.Nacionalidad;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,7 +17,7 @@ public interface AutorRepository extends
     List<Autor> findByFechaNacimientoBetween(LocalDate fechaNacimientoInicial,
             LocalDate fechaNacimientoFin);
     
-    List<Autor> findByNacionalidad(String nacionalidad);
+    List<Autor> findByNacionalidad(Nacionalidad nacionalidad);
     
     List<Autor> findAllByOrderByFechaNacimientoAsc();
     

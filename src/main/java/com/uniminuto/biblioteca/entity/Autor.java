@@ -41,7 +41,7 @@ public class Autor implements Serializable {
     
     /** Categoría a la que pertenece el libro. */
     @ManyToOne
-    @JoinColumn(name = "id_nacionalidad", nullable = false)
+    @JoinColumn(name = "nacionalidad_id", nullable = false)
     private Nacionalidad nacionalidad;
     
     /**

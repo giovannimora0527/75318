@@ -25,7 +25,7 @@ public class Nacionalidad implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_nacionalidad")
+    @Column(name = "nacionalidad_id")
     private Integer nacionalidadId;
 
     @Column(name = "nombre", nullable = false, length = 100)

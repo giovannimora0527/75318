@@ -1,6 +1,7 @@
 package com.uniminuto.biblioteca.repository;
 
 import com.uniminuto.biblioteca.entity.Nacionalidad;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -9,5 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface NacionalidadRepository  extends
         JpaRepository<Nacionalidad, Integer>{
-    
+   
+    Optional<Nacionalidad> findByNombre(String nombre);
 }
