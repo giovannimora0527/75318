@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 /**
  *
- * @author harri
+ * @author lmora
  */
 @Repository
 public interface LibroRepository extends
@@ -35,5 +35,12 @@ public interface LibroRepository extends
      * @return Lista de libros que cumplen el criterio.
      */
     List<Libro> findByAnioPublicacionBetween(Integer anioIni, Integer anioFin);
+    
+    /**
+     * Consulta el libro por titulo.
+     * @param titulo
+     * @return 
+     */
+    boolean existsByTitulo(String titulo);
     
 }
