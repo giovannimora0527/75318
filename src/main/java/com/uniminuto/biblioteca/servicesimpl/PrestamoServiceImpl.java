@@ -13,6 +13,7 @@ import com.uniminuto.biblioteca.utils.DateFormatterService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
@@ -95,13 +96,21 @@ public class PrestamoServiceImpl implements PrestamoService {
         if (prestamo == null) {
             throw new BadRequestException("El objeto no puede ser nulo");
         }
+        LocalDateTime fechaActual = LocalDateTime.now();
+        if (prestamo.getFechaEntrega().isAfter(fechaActual)) {
+            DateTimeFormatter formatter = DateTimeFormatter
+                    .ofPattern("yyyy-MM-dd HH:mm:ss");
+            throw new BadRequestException("La fecha entrega no puede "
+                    + "ser mayor a la fecha actual del sistema: "
+                    + fechaActual.format(formatter));
+        }
 
-        if (LocalDateTime.now().isAfter(prestamo.getFechaDevolucion())) {
+        if (fechaActual.isAfter(prestamo.getFechaDevolucion())) {
             prestamo.setEstado(Prestamo.EstadoPrestamo.VENCIDO);
         } else {
             prestamo.setEstado(Prestamo.EstadoPrestamo.DEVUELTO);
         }
-
+        
         prestamo.setFechaEntrega(prestamo.getFechaEntrega());
         this.prestamoRepository.save(prestamo);
         RespuestaGenericaRs rta = new RespuestaGenericaRs();
