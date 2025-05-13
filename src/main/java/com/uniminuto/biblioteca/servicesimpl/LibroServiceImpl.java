@@ -114,6 +114,10 @@ public class LibroServiceImpl implements LibroService {
             listPrestamoByLibro = this.prestamoRepository.findByLibro(libro);
             // Verificar si no hay préstamos activos o si el préstamo está en estado DEVUELTO
             boolean libroDisponible = true;
+            if (libro.getExistencias() == 0) {
+                libroDisponible = false;
+                break; // Si hay al menos un préstamo prestado, el libro no está disponible
+            }
             for (Prestamo prestamo : listPrestamoByLibro) {
                 if (prestamo.getEstado() == EstadoPrestamo.PRESTADO) {
                     libroDisponible = false;

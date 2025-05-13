@@ -69,15 +69,18 @@ public class PrestamoServiceImpl implements PrestamoService {
 
         Prestamo prestamoNuevo = new Prestamo();
         prestamoNuevo.setEstado(Prestamo.EstadoPrestamo.PRESTADO);
-        LocalDate fecha = dateFormatterService.parseStringToLocalDate(prestamoRq.getFechaDevolucion(), "yyyy-MM-dd");
+        LocalDate fecha = dateFormatterService
+                .parseStringToLocalDate(prestamoRq.getFechaDevolucion(), "yyyy-MM-dd");
         LocalTime horaActual = LocalTime.now(); // hora del sistema
         LocalDateTime fechaDevolucion = fecha.atTime(horaActual);
         prestamoNuevo.setFechaDevolucion(fechaDevolucion);
         LocalDateTime ahora = LocalDateTime.now();
         LocalDateTime minimoFechaDevolucion = ahora.plusHours(24);
 
-        if (prestamoNuevo.getFechaDevolucion().isBefore(minimoFechaDevolucion)) {
-            throw new BadRequestException("La fecha de devolución debe ser al menos 1 día después de la fecha actual.");
+        if (prestamoNuevo.getFechaDevolucion()
+                .isBefore(minimoFechaDevolucion)) {
+            throw new BadRequestException("La fecha de devolución debe ser al "
+                    + "menos 1 día después de la fecha actual.");
         }
 
         prestamoNuevo.setFechaPrestamo(LocalDateTime.now());
